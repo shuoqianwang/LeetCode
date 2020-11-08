@@ -1,36 +1,31 @@
 class Solution {
 public:
     string minRemoveToMakeValid(string s) {
-        set<int> indexToRemove;
-        stack<int> st;
+        vector<int> index2rm;
+        stack<int> stk;
         for (int i = 0; i < s.size(); i++) {
-            if (s[i] == '(') {
-                st.push(i);
-                continue;
-            }
-            if (s[i] == ')') {
-                if (!st.empty()) {
-                    st.pop();
-                } else {
-                    indexToRemove.insert(i);
-                }
+            if (s[i] == '(')
+                stk.push(i);
+            else if (s[i] == ')') {
+                if (!stk.empty())
+                    stk.pop();
+                else index2rm.push_back(i);
             }
         }
-        while (!st.empty()) {
-            indexToRemove.insert(st.top());
-            st.pop();
+        while (!stk.empty()) {
+            index2rm.push_back(stk.top());
+            stk.pop();
         }
-        std::string str;
+        string str;
         int start = 0;
-        for (auto it = indexToRemove.begin(); it != indexToRemove.end(); it++) {
+        sort(index2rm.begin(), index2rm.end(), less<int>());
+        for (auto it = index2rm.begin(); it != index2rm.end(); it++) {
             if (start < *it) {
                 str.append(s.substr(start, *it - start));
                 start = *it + 1;
                 continue;
-            }
-            if (start == *it) {
+            } else if (start == *it)
                 start++;
-            }
         }
         if (start < s.size())
             str.append(s.substr(start));
